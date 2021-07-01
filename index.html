@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8"><!--申明编码-->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"><!-- 避免IE使用兼容模式 -->
+    <meta name="renderer" content="webkit"><!--浏览器内核默认为webkit-->
+    <meta name="MobileOptimized" content="640"><!-- 微软的老式浏览器 -->
+    <meta name="HandheldFriendly" content="true"><!-- 针对手持设备优化，主要是针对一些老的不识别viewport的浏览器，比如黑莓-->
+    <meta name="msapplication-tap-highlight" content="no"><!-- windows phone 点击无高光 -->
+    <meta name="apple-mobile-web-app-capable" content="yes"/><!--启用WebApp全屏模式，可隐藏地址栏，仅针对ios的safari-->
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="format-detection" content="telephone=no, email=no"/><!--忽略页面中的数字识别为电话号码和邮箱地址-->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/><!--隐藏状态栏/设置状态栏颜色，仅针对ios的safari-->
+    <meta name="viewport" content="width=640,maximum-scale=1.0, user-scalable=no">
+    <!--禁止用户缩放页面-->
+    <title>电信合伙人 海报生成器</title>
+    <link rel="stylesheet" href="css/swiper.3.1.7.min.css?ver=1">
+    <link rel="stylesheet" href="css/weui.min.css?ver=1">
+    <link rel="stylesheet" href="css/main.css?ver=0.2.4">
+    <script charset="UTF-8" src="libs/swiper.3.1.7.min.js?var=1"></script>
+    <script charset="UTF-8" src="libs/weui.min.js?var=1"></script>
+    <script charset="UTF-8" src="libs/lrz.all.bundle.js?var=1"></script>
+    <script charset="UTF-8" src="libs/zepto-all.min.js?var=1"></script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js?var=1"></script>
+    <script type="text/javascript" src="http://s-api.pflm.cn/sys/js.share?gh=gh_cf3603d36721"></script>
+    <!--<script src="//cdn.jsdelivr.net/npm/eruda"></script>-->
+    <script charset="UTF-8">
+        // try {
+        //     eruda.init();
+        // } catch (e) {
+        //
+        // }
+        var pageUrl = 'http://nj.pflm.cn/njTelecomPost/Activity';//资源根路径
+        var srcUrl = 'http://h5.brhai.com/njtelecom/20200220';
+        var shareDatas = {
+            imgUrl: srcUrl + '/images/share.jpg?v=1',
+            lineLink: pageUrl,
+            descContent: '合伙人，请开始制作你的专属海报吧',
+            shareTitle: '电信合伙人 海报生成器'
+        };
+        resetShareDatas();
+
+        function resetShareDatas() {
+            if (typeof shareDatas == 'object') {
+                var ua = window.navigator.userAgent.toLowerCase();
+                if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+                    if (shareDatas.notShare) {
+                        function onBridgeReady() {
+                            WeixinJSBridge.call('hideOptionMenu')
+                        }
+
+                        if (typeof WeixinJSBridge == 'undefined') {
+                            if (document.addEventListener) {
+                                document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false)
+                            } else if (document.attachEvent) {
+                                document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                                document.attachEvent('onWeixinJSBridgeReady', onBridgeReady)
+                            }
+                        } else {
+                            onBridgeReady();
+                        }
+                    } else if (typeof wx == 'object') {
+                        wx.config({
+                            debug: false,
+                            appId: share_sign.appId,
+                            timestamp: share_sign.timestamp,
+                            nonceStr: share_sign.nonceStr,
+                            signature: share_sign.signature,
+                            jsApiList: ['checkJsApi', 'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo']
+                        });
+                        wx.ready(function () {
+                            var imgUrl = shareDatas.imgUrl;
+                            var lineLink = shareDatas.lineLink;
+                            var descContent = shareDatas.descContent;
+                            var shareTitle = shareDatas.shareTitle;
+                            //好友
+                            wx.onMenuShareAppMessage({
+                                title: shareTitle,
+                                desc: descContent,
+                                link: lineLink,
+                                imgUrl: imgUrl,
+                                type: '',
+                                dataUrl: '',
+                                success: function () {
+//                            console.info("转发好友 OK!",shareDatas);
+                                },
+                                cancel: function () {
+                                }
+                            });
+                            //朋友圈
+                            wx.onMenuShareTimeline({
+                                title: shareTitle,
+                                link: lineLink,
+                                imgUrl: imgUrl,
+                                success: function () {
+//                            console.info("转发朋友圈 OK!",shareDatas);
+                                },
+                                cancel: function () {
+                                }
+                            });
+                            wx.onMenuShareQQ({
+                                title: shareTitle,
+                                desc: descContent,
+                                link: lineLink,
+                                imgUrl: imgUrl,
+                                success: function () {
+                                },
+                                cancel: function () {
+                                }
+                            });
+                            wx.onMenuShareWeibo({
+                                title: shareTitle,
+                                desc: descContent,
+                                link: lineLink,
+                                imgUrl: imgUrl,
+                                success: function () {
+                                },
+                                cancel: function () {
+                                }
+                            });
+                        });
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<audio src="sound/sound-bg.mp3" id="audio" autoplay="autoplay" preload loop="loop"></audio>
+<img src="images/btn-close.png" alt="" id="qrImg" style="display: none">
+<div class="section-edit">
+    <div class="section-box">
+        <div class="content-box">
+            <div class="head-box">
+                <div class="btn-sound"></div>
+            </div>
+            <div class="edit-box">
+                <div class="edit-image" id="editBox"></div>
+                <div class="btn-box">
+                    <a href="javascript:" class="btn-upload3">
+                        <input id="createFile" type="file" accept="image/*"/>
+                    </a>
+                    <a href="javascript:" class="btn-create"></a>
+                </div>
+            </div>
+        </div>
+        <div class="popup-box">
+            <div class="popup-layer">
+                <div class="popup-cxt">
+                    <a href="javascript:" class="btn-close"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="swiper-container" id="SwiperContainer">
+    <div class="swiper-wrapper">
+        <div class="swiper-slide stop-swiping">
+            <div class="section-box section-home">
+                <div class="content-box">
+                    <div class="head-box">
+                        <div class="btn-sound"></div>
+                    </div>
+                    <div class="home-box">
+                        <div class="home-cxt">
+                            <h1></h1>
+                            <h2></h2>
+                            <a href="javascript:" class="btn-start"></a>
+                            <a href="javascript:" class="btn-upload1">
+                                <input id="qrcodeFile" type="file" accept="image/*"/>
+                            </a>
+                        </div>
+                        <div class="result-cxt">
+                            <div>
+                                <h1></h1>
+                                <h2></h2>
+                            </div>
+                            <a href="javascript:" class="btn-upload2"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="swiper-slide stop-swiping">
+            <div class="section-box section-poster">
+                <div class="content-box">
+                    <div class="head-box">
+                        <div class="btn-sound"></div>
+                    </div>
+                    <div class="poster-box">
+                        <div class="poster-img" id="posterBox">
+                        </div>
+                        <p>长按保存图片</p>
+                        <a href="javascript:" class="btn-again"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--<script src="js/motion.js?var=2"></script>-->
+<!--<script src="js/main.js?var=2"></script>-->
+<script src="libs/poster.min.js?ver=0.2.4"></script>
+</body>
+</html>
